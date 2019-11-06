@@ -10,7 +10,7 @@ var slaveClient *redis.Client
 
 func init() {
 	masterClient = redis.NewClient(&redis.Options{
-		Addr: "localhost:5555",
+		Addr: "39.99.133.74:5555",
 	})
 
 	if _, err := masterClient.Ping().Result(); err != nil {
@@ -20,7 +20,7 @@ func init() {
 
 func init() {
 	slaveClient = redis.NewClient(&redis.Options{
-		Addr: "localhost:6666",
+		Addr: "39.99.133.74:6666",
 	})
 
 	if _, err := masterClient.Ping().Result(); err != nil {
