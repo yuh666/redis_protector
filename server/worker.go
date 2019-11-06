@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis"
 	"log"
 	"math/rand"
@@ -44,6 +43,7 @@ func NewRedis2RedisWorker(parent context.Context, masterRedisCli, slaveRedisCli 
 		reportChan:     reportChan,
 		endChan:        endChan,
 		threshold:      threshold,
+		lowWaterMark:   int(float64(threshold) * lowWatermarkFactor),
 		thresholdChan:  make(chan int, 1),
 	}
 }
@@ -83,7 +83,6 @@ func (w *Redis2RedisWorker) Start() {
 				masterLen: int(masterLen),
 				slaveLen:  int(slaveLen),
 			}
-			log.Println("上报数据")
 			if int(masterLen) > w.threshold {
 				w.downCount = 0
 				w.upCount++
@@ -120,7 +119,6 @@ func (w *Redis2RedisWorker) Start() {
 				}
 				//放回
 				mvLen := w.threshold - int(masterLen)
-				fmt.Println("需要放回的长度", mvLen)
 				buf := make([]interface{}, 0, mvLen)
 				for i := 0; i < mvLen; i++ {
 					result, err := w.slaveRedisCli.LPop(w.queueName).Result()

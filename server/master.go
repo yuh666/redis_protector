@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-redis/redis"
 	"log"
 	"sync"
@@ -10,7 +11,7 @@ import (
 
 const (
 	queuePrefix    = "queue_*"
-	ExpectQueueLen = 50
+	ExpectQueueLen = 5
 )
 
 type ReportData struct {
@@ -106,6 +107,7 @@ func (s *RedisServer) scan() {
 			//删除
 			for k, _ := range s.stats {
 				if _, ok := tmpMap[k]; !ok {
+					fmt.Println("删除。。。。。。。。。。。。")
 					s.workers[k].Stop()
 					s.Lock()
 					delete(s.stats, k)
